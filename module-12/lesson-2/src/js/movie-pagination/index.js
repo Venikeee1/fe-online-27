@@ -14,6 +14,7 @@ class MoviePagination {
     this.totalPages = 0;
     this.goToPrevPage = this.goToPrevPage.bind(this);
     this.goToNextPage = this.goToNextPage.bind(this);
+    this.loadMore = this.loadMore.bind(this);
   }
 
   get movies() {
@@ -35,7 +36,9 @@ class MoviePagination {
     }
 
     this.currentPage -= 1;
-    this.fetchMovies();
+    this.fetchMovies().then(({ results }) => {
+      this.movies = this.convertMoviesData(results);
+    });
   }
 
   goToNextPage() {
@@ -44,14 +47,35 @@ class MoviePagination {
     }
 
     this.currentPage += 1;
-    this.fetchMovies();
+    this.fetchMovies().then(({ results }) => {
+      this.movies = this.convertMoviesData(results);
+    });
+  }
+
+  loadMore() {
+    this.currentPage += 1;
+    return this.fetchMovies().then(({ results }) => {
+      this.addMovies(this.convertMoviesData(results));
+    });
+  }
+
+  addMovies(newMovies) {
+    this.movies = [...this.movies, ...newMovies];
+  }
+
+  convertMoviesData(movieList) {
+    return movieList.map(movie => movieAdapter(movie));
   }
 
   fetchMovies() {
-    return movieApi.fetchPopular(this.currentPage).then(result => {
-      const { results, total_pages } = result;
+    return movieApi
+      .fetchPopular(this.currentPage)
+      .then(({ results, total_pages }) => ({ results, total_pages }));
+  }
 
-      this.movies = results.map(movie => movieAdapter(movie));
+  mount() {
+    this.fetchMovies().then(({ results, total_pages }) => {
+      this.movies = this.convertMoviesData(results);
       this.totalPages = total_pages;
     });
   }
