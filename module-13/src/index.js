@@ -1,11 +1,20 @@
+import clientStorage from './js/api/clientStorage';
+import apartmentApi from './js/api/apartmentApi';
+import apartmentsTemplate from './templates/apartments.hbs';
+
+import './css/style.css';
 import './styles.css';
-import MoviePagination from './js/movie-pagination';
 
-const movies = new MoviePagination('.movie-list');
-const prevPaginationBtnRef = document.querySelector('#prev-page');
-const nextPaginationBtnRef = document.querySelector('#next-page');
+const renderApartments = async () => {
+  const apartmentsWrapperRef = document.querySelector('.apartments-wrapper');
+  const apartments = await apartmentApi.getApartments();
+  apartmentsWrapperRef.innerHTML = apartmentsTemplate(apartments);
+};
 
-prevPaginationBtnRef.addEventListener('click', movies.goToPrevPage);
-nextPaginationBtnRef.addEventListener('click', movies.goToNextPage);
+const session = clientStorage.getItem('session');
 
-movies.fetchMovies();
+if (!session?.token) {
+  window.location = '/login.html';
+} else {
+  renderApartments();
+}

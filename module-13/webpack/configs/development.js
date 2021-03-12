@@ -21,6 +21,17 @@ module.exports = env => ({
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.html',
+      chunks: ['main'],
+    }),
+    new HtmlWebpackPlugin({
+      template: './registration.html',
+      filename: 'registration.html',
+      chunks: ['registration'],
+    }),
+    new HtmlWebpackPlugin({
+      template: './login.html',
+      filename: 'login.html',
+      chunks: ['login'],
     }),
   ],
   devServer: {
