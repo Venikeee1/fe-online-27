@@ -7,10 +7,9 @@ import '@pnotify/core/dist/BrightTheme.css';
 class RegisterForm {
   constructor(selector) {
     this.form = document.querySelector(selector);
-    this.submitHandler = this.submitHandler.bind(this);
   }
 
-  async submitHandler(event) {
+  submitHandler = async event => {
     event.preventDefault();
 
     const formData = new FormData(this.form);
@@ -35,7 +34,7 @@ class RegisterForm {
         text: error.statusText,
       });
     }
-  }
+  };
 
   addListeners() {
     this.form.addEventListener('submit', this.submitHandler);
